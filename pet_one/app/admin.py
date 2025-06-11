@@ -1,7 +1,8 @@
 from django.contrib import admin
-from app.models import Room, Booking, RoomPhoto
+from app.models import Room, Booking, RoomPhoto, User
 
 
 admin.site.register(Room)
 admin.site.register(Booking)
 admin.site.register(RoomPhoto)
+admin.site.register(User)

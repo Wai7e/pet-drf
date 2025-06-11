@@ -1,6 +1,23 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+from django.utils.translation import gettext_lazy as _
 
+
+class User(AbstractUser):
+    phone_number = models.CharField(
+        max_length=15,
+        blank=True,
+        null=True,
+        verbose_name=_("phone number"),
+        help_text=_("User's phone number")
+    )
+
+    class Meta:
+        verbose_name = _("user")
+        verbose_name_plural = _("users")
+
+    def __str__(self):
+        return self.username
 
 class Room(models.Model):
     room_name = models.CharField(max_length=20, default=None, verbose_name= "название")
@@ -9,6 +26,7 @@ class Room(models.Model):
     price_per_nigt = models.DecimalField(max_digits=10, decimal_places=0, verbose_name="цена за ночь")
     capacity = models.PositiveBigIntegerField(verbose_name="вместимость")
     descripton = models.TextField(blank=True, verbose_name="описание")
+    photo = models.ImageField(upload_to='room_photos/', null=True)
     is_available = models.BooleanField(default=True)
 
 class RoomPhoto(models.Model):
@@ -17,7 +35,7 @@ class RoomPhoto(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
 class Booking(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name= "пользователь")
+    user = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name= "пользователь")
     room = models.ForeignKey(Room, on_delete=models.CASCADE, verbose_name= "номер")
     check_in_date = models.DateField(blank=False, verbose_name= "дата заезда")
     check_out_date = models.DateField(blank=False, verbose_name= "дата выезда")
