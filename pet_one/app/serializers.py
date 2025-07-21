@@ -1,17 +1,17 @@
 from rest_framework import serializers
-from .models import Room, RoomPhoto, User
+from .models import Room, RoomPhoto, User, Booking
 from django.contrib.auth.password_validation import validate_password
 
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
-        fields = ('room_name', 'room_number', 'room_type', 'price_per_nigt', 
+        fields = ('room_name', 'room_number', 'room_type', 'price_per_night', 
                   'capacity', 'descripton', 'photo', 'is_available')
 
     room_name = serializers.CharField(max_length=20)
     room_number = serializers.CharField(max_length=10)
     room_type = serializers.CharField(max_length=50)
-    price_per_nigt = serializers.DecimalField(max_digits=10, decimal_places=0)
+    price_per_night = serializers.DecimalField(max_digits=10, decimal_places=0)
     capacity = serializers.IntegerField()
     descripton = serializers.CharField()
     photo = serializers.ImageField()
@@ -27,9 +27,12 @@ class RoomPhotoSerializer(serializers.ModelSerializer):
 
 
 class BookingSerializer(serializers.ModelSerializer):
+    room = RoomSerializer()  # Добавьте это!
+
     class Meta:
+        model = Booking
         fields = (
-            'user_id', 'room_id', 'check_in_date', 'check_out_date', 
+            'id', 'room', 'user_id', 'check_in_date', 'check_out_date',
             'total_price', 'status', 'created_at'
         )
     
@@ -41,7 +44,7 @@ class BookingSerializer(serializers.ModelSerializer):
         ('confirmed', 'Confirmed'),
         ('cancelled', 'Cancelled')
     ], default='pending')
-    created_at = serializers.DateTimeField()
+    created_at = serializers.DateField()
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

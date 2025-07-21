@@ -1,0 +1,129 @@
+@tailwind base; 
+@tailwind components;
+@tailwind utilities;
+
+   /* Стили для календаря в input[type="date"] */
+   input[type="date"] {
+     @apply w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 bg-white/90 text-gray-700;
+   }
+
+   /* Стилизация иконки календаря в WebKit-браузерах (Chrome, Edge) */
+   input[type="date"]::-webkit-calendar-picker-indicator {
+     /* background: url('/calendar-icon.svg') no-repeat center; */
+     background-size: 20px;
+     cursor: pointer;
+     opacity: 0.7;
+     padding: 8px;
+   }
+
+   input[type="date"]::-webkit-calendar-picker-indicator:hover {
+     opacity: 1;
+   }
+
+   /* Стилизация календаря в Firefox (ограниченная поддержка) */
+   input[type="date"]::-moz-calendar-picker-indicator {
+     cursor: pointer;
+   }
+
+   /* Стили для выпадающего календаря (ограниченная поддержка в WebKit) */
+   input[type="date"]::-webkit-datetime-edit {
+     @apply text-gray-700;
+   }
+
+   input[type="date"]::-webkit-datetime-edit-year-field,
+   input[type="date"]::-webkit-datetime-edit-month-field,
+   input[type="date"]::-webkit-datetime-edit-day-field {
+     @apply text-gray-700;
+   }
+
+   /* Стили для react-slick */
+   .slick-prev,
+   .slick-next {
+     z-index: 10;
+     width: 40px;
+     height: 40px;
+     background: rgba(0, 0, 0, 0.5);
+     border-radius: 50%;
+   }
+
+   .slick-prev:hover,
+   .slick-next:hover {
+     background: rgba(0, 0, 0, 0.7);
+   }
+
+   .slick-dots li button:before {
+     color: white;
+     font-size: 12px;
+   }
+
+   .slick-dots li.slick-active button:before {
+     color: #2563eb;
+   }
+
+   /* Стили для react-datepicker */
+   .react-datepicker {
+     @apply border border-gray-300 rounded-md bg-white/90 shadow-lg font-sans;
+   }
+
+   .react-datepicker__header {
+     @apply bg-blue-600 text-white rounded-t-md p-4;
+   }
+
+   .react-datepicker__day-name,
+   .react-datepicker__day,
+   .react-datepicker__time-name {
+     @apply text-gray-700;
+   }
+
+   .react-datepicker__day--selected,
+   .react-datepicker__day--keyboard-selected {
+     @apply bg-blue-500 text-white rounded-full;
+   }
+
+   .react-datepicker__day--today {
+     @apply bg-blue-100 text-blue-700 font-bold;
+   }
+
+   .react-datepicker__day:hover {
+     @apply bg-blue-200 text-blue-900 rounded-full;
+   }
+
+   .react-datepicker__navigation {
+     @apply mt-2;
+   }
+
+   .react-datepicker__navigation-icon::before {
+     border-color: white;
+   }
+
+   .react-datepicker__month-container {
+     @apply bg-white/90;
+   }
+
+   .react-datepicker__input-container input {
+     @apply w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 bg-white/90 text-gray-700;
+   }
+
+   /* Стили для react-slick */
+   .slick-prev,
+   .slick-next {
+     z-index: 10;
+     width: 40px;
+     height: 40px;
+     background: rgba(0, 0, 0, 0.5);
+     border-radius: 50%;
+   }
+
+   .slick-prev:hover,
+   .slick-next:hover {
+     background: rgba(0, 0, 0, 0.7);
+   }
+
+   .slick-dots li button:before {
+     color: white;
+     font-size: 12px;
+   }
+
+   .slick-dots li.slick-active button:before {
+     color: #2563eb;
+   }

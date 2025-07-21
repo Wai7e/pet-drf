@@ -45,10 +45,10 @@ class RoomApiView(APIView):
 class RoomsAvailableApiView(APIView):
     permission_classes = [AllowAny]
 
-    def post(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         try:
-            check_in_date = request.data.get('check_in_date')
-            check_out_date = request.data.get('check_out_date')
+            check_in_date = request.GET.get('check_in_date')
+            check_out_date = request.GET.get('check_out_date')
 
             if not check_in_date or not check_out_date:
                 return Response(
@@ -65,12 +65,14 @@ class RoomsAvailableApiView(APIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
+            # Найти все номера, у которых есть пересекающиеся бронирования
             booked_rooms = Booking.objects.filter(
-                Q(check_in_date__lte=check_out) & 
-                Q(check_out_date__gte=check_in) &
-                Q(status='confirmed')
+                Q(check_in_date__lt=check_out) & 
+                Q(check_out_date__gt=check_in) &
+                Q(status__in=['pending', 'confirmed'])
             ).values_list('room_id', flat=True)
 
+            # Исключить такие номера из доступных
             available_rooms = Room.objects.filter(
                 is_available=True
             ).exclude(
@@ -88,6 +90,113 @@ class RoomsAvailableApiView(APIView):
             return Response(
                 {"error": "Invalid date format. Use YYYY-MM-DD"}, 
                 status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def post(self, request, *args, **kwargs):
+        try:
+            room_id = request.data.get('room_id')
+            check_in_date = request.data.get('check_in_date')
+            check_out_date = request.data.get('check_out_date')
+
+            if not all([room_id, check_in_date, check_out_date]):
+                return Response(
+                    {"error": "room_id, check_in_date, and check_out_date are required"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Convert string dates to datetime objects
+            check_in = datetime.strptime(check_in_date, '%Y-%m-%d').date()
+            check_out = datetime.strptime(check_out_date, '%Y-%m-%d').date()
+
+            # Validate dates
+            if check_in >= check_out:
+                return Response(
+                    {"error": "Check-in date must be before check-out date"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            if check_in < datetime.now().date():
+                return Response(
+                    {"error": "Check-in date cannot be in the past"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Check if room exists and is available
+            try:
+                room = Room.objects.get(id=room_id, is_available=True)
+            except Room.DoesNotExist:
+                return Response(
+                    {"error": "Room not found or not available"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            # Check if room is already booked for these dates
+            existing_booking = Booking.objects.filter(
+                room=room,
+                status__in=['pending', 'confirmed'],
+                check_in_date__lt=check_out,
+                check_out_date__gt=check_in
+            ).exists()
+
+            if existing_booking:
+                return Response(
+                    {"error": "Room is already booked for these dates"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Calculate total price
+            nights = (check_out - check_in).days
+            total_price = room.price_per_night * nights
+
+            # Create booking
+            booking = Booking.objects.create(
+                user=request.user,
+                room=room,
+                check_in_date=check_in,
+                check_out_date=check_out,
+                total_price=total_price,
+                status='pending'
+            )
+
+            serializer = BookingSerializer(booking)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except ValueError:
+            return Response(
+                {"error": "Invalid date format. Use YYYY-MM-DD"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def delete(self, request, booking_id, *args, **kwargs):
+        try:
+            # Get the booking and verify it belongs to the user
+            booking = Booking.objects.get(id=booking_id, user=request.user)
+            
+            # Check if the booking can be cancelled (e.g., not already cancelled)
+            if booking.status == 'cancelled':
+                return Response(
+                    {"error": "Booking is already cancelled"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Update booking status to cancelled instead of deleting
+            booking.status = 'cancelled'
+            booking.save()
+            
+            return Response(
+                {"message": "Booking cancelled successfully"},
+                status=status.HTTP_200_OK
+            )
+            
+        except Booking.DoesNotExist:
+            return Response(
+                {"error": "Booking not found or you don't have permission to cancel it"},
+                status=status.HTTP_404_NOT_FOUND
             )
 
 
@@ -169,7 +278,7 @@ class UserBookingsView(APIView):
             # Check if room is already booked for these dates
             existing_booking = Booking.objects.filter(
                 room=room,
-                status='confirmed',
+                status__in=['pending', 'confirmed'],
                 check_in_date__lte=check_out,
                 check_out_date__gte=check_in
             ).exists()
@@ -182,7 +291,7 @@ class UserBookingsView(APIView):
 
             # Calculate total price
             nights = (check_out - check_in).days
-            total_price = room.price_per_nigt * nights
+            total_price = room.price_per_night * nights
 
             # Create booking
             booking = Booking.objects.create(

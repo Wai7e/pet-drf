@@ -23,7 +23,7 @@ class Room(models.Model):
     room_name = models.CharField(max_length=20, default=None, verbose_name= "название")
     room_number = models.CharField(max_length=10, verbose_name= "номер номера", unique=True)
     room_type = models.CharField(max_length=50, verbose_name= "тип комнаты")
-    price_per_nigt = models.DecimalField(max_digits=10, decimal_places=0, verbose_name="цена за ночь")
+    price_per_night = models.DecimalField(max_digits=10, decimal_places=0, verbose_name="цена за ночь")
     capacity = models.PositiveBigIntegerField(verbose_name="вместимость")
     descripton = models.TextField(blank=True, verbose_name="описание")
     photo = models.ImageField(upload_to='room_photos/', null=True)
