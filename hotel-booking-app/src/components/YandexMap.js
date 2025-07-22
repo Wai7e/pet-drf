@@ -33,45 +33,26 @@ const YandexMap = ({
 
           // Добавляем стиль карты (светлая тема для лучшей интеграции)
           
-          // Добавляем метки отелей
-          const locations = [
-            {
-              coords: [55.7539, 37.6208],
-              name: 'CLUB43 Центр',
-              address: 'Красная площадь, 1',
-              color: '#2563eb'
-            },
-            {
-              coords: [55.7312, 37.6014],
-              name: 'CLUB43 Парк',
-              address: 'Парк Горького, 9',
-              color: '#059669'
-            },
-            {
-              coords: [55.7468, 37.5386],
-              name: 'CLUB43 Бизнес',
-              address: 'Московский Сити',
-              color: '#7c3aed'
-            }
-          ];
-
-          locations.forEach(location => {
-            const placemark = new window.ymaps.Placemark(location.coords, {
-              balloonContent: `
-                <div style="padding: 10px; font-family: Arial, sans-serif;">
-                  <h3 style="margin: 0 0 8px 0; color: #1f2937; font-size: 16px;">${location.name}</h3>
-                  <p style="margin: 0; color: #6b7280; font-size: 14px;">${location.address}</p>
-                  <button style="margin-top: 10px; background: ${location.color}; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Подробнее</button>
+          // Добавляем метку отеля в Геленджике
+          const placemark = new window.ymaps.Placemark(center, {
+            balloonContent: `
+              <div style="padding: 12px; font-family: Arial, sans-serif; max-width: 250px;">
+                <h3 style="margin: 0 0 8px 0; color: #1f2937; font-size: 16px; font-weight: bold;">CLUB43 Геленджик</h3>
+                <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">г. Геленджик, ул. Курортная, 1</p>
+                <p style="margin: 0 0 10px 0; color: #9ca3af; font-size: 12px;">Курортный отель с видом на море</p>
+                <div style="display: flex; gap: 8px;">
+                  <button style="background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; flex: 1;">Забронировать</button>
+                  <button style="background: #f3f4f6; color: #374151; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Подробнее</button>
                 </div>
-              `,
-              hintContent: location.name
-            }, {
-              preset: 'islands#blueHotelIcon',
-              iconColor: location.color
-            });
-
-            mapInstance.current.geoObjects.add(placemark);
+              </div>
+            `,
+            hintContent: 'CLUB43 Геленджик'
+          }, {
+            preset: 'islands#blueHotelIcon',
+            iconColor: '#2563eb'
           });
+
+          mapInstance.current.geoObjects.add(placemark);
 
           // Настраиваем поведение карты
           mapInstance.current.behaviors.enable([
