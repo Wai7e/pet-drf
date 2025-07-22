@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { getAvailableRooms, getRoomDetails } from '../api/rooms';
 import useAuthStore from '../store/authStore';
 import RoomCard from '../components/RoomCard';
@@ -27,11 +27,13 @@ function Home() {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const { accessToken } = useAuthStore();
+  const [mapCenter, setMapCenter] = useState([44.5606, 38.0767]); // Геленджик
+  const [mapZoom, setMapZoom] = useState(13);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % backgroundImages.length);
-    }, 5000);
+    }, 7000); // Изменено на 7 секунд
     return () => clearInterval(interval);
   }, []);
 
@@ -100,11 +102,19 @@ function Home() {
   };
 
   return (
-    <div
-      className="h-screen bg-cover bg-center transition-all duration-1000 flex flex-col"
-      style={{ backgroundImage: `url(${backgroundImages[currentImage]})` }}
-    >
-      <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div className="relative min-h-screen flex flex-col">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentImage}
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${backgroundImages[currentImage]})` }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1 }}
+        />
+      </AnimatePresence>
+      <div className="relative z-10 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8" style={{ height: 'calc(100vh - 100px)' }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -163,7 +173,7 @@ function Home() {
         </motion.div>
       </div>
       {rooms.length > 0 && (
-        <div className="bg-white/90 backdrop-blur-md py-8">
+        <div className="relative z-10 bg-white/90 backdrop-blur-md py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">
               Доступные номера
@@ -182,22 +192,8 @@ function Home() {
           </div>
         </div>
       )}
-      <BookingModal
-        isOpen={isBookingModalOpen}
-        onRequestClose={closeModals}
-        room={selectedRoom}
-        initialCheckIn={formatDate(checkIn)}
-        initialCheckOut={formatDate(checkOut)}
-      />
-      <InfoModal
-        isOpen={isDetailsModalOpen}
-        onRequestClose={closeModals}
-        item={selectedRoom}
-        type="room"
-      />
-      
       {/* Секция с картой и локацией */}
-      <div className="bg-white/90 backdrop-blur-md py-12">
+      <div className="relative z-10 bg-white/90 backdrop-blur-md py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -221,10 +217,12 @@ function Home() {
               transition={{ duration: 0.5, delay: 0.1 }}
             >
               <YandexMap
-                center={[44.5606, 38.0767]} // Геленджик
-                zoom={13}
+                center={mapCenter}
+                zoom={mapZoom}
                 height="400px"
-                className="w-full"
+                className="w-full rounded-lg shadow-lg"
+                onCenterChange={setMapCenter}
+                onZoomChange={setMapZoom}
               />
             </motion.div>
 
@@ -299,7 +297,7 @@ function Home() {
         </div>
       </div>
 
-      <footer className="bg-gray-900 text-white py-4 text-center">
+      <footer className="relative z-10 bg-gray-900 text-white py-4 text-center">
         <p>© 2025 CLUB43. Все права защищены.</p>
       </footer>
     </div>
