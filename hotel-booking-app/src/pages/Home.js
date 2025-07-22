@@ -101,7 +101,7 @@ function Home() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center transition-all duration-1000 flex flex-col"
+      className="h-screen bg-cover bg-center transition-all duration-1000 flex flex-col"
       style={{ backgroundImage: `url(${backgroundImages[currentImage]})` }}
     >
       <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
