@@ -6,7 +6,6 @@ import Login from './pages/Login';
 import Bookings from './pages/Bookings';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
-import MapPage from './pages/MapPage';
 import { useEffect } from 'react';
 import { getProfile } from './api/auth';
 import useAuthStore from './store/authStore';
@@ -32,7 +31,6 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/rooms" element={<RoomList />} />
-        <Route path="/map" element={<MapPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/bookings" element={<Bookings />} />

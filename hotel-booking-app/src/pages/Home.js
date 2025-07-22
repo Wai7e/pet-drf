@@ -5,6 +5,7 @@ import useAuthStore from '../store/authStore';
 import RoomCard from '../components/RoomCard';
 import BookingModal from '../components/BookingModal';
 import InfoModal from '../components/InfoModal';
+import YandexMap from '../components/YandexMap';
 import { toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -161,6 +162,101 @@ function Home() {
           )}
         </motion.div>
       </div>
+
+      {/* Секция с картой и локациями */}
+      <div className="bg-white/90 backdrop-blur-md py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-8"
+          >
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Наши локации
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Отели CLUB43 расположены в самых престижных районах Москвы
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            {/* Карта */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <YandexMap
+                center={[55.7539, 37.6208]} // Красная площадь
+                zoom={12}
+                height="400px"
+                className="w-full"
+              />
+            </motion.div>
+
+            {/* Информация о локациях */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="space-y-4"
+            >
+              <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 border border-gray-200/50 shadow-sm">
+                <div className="flex items-start space-x-4">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      CLUB43 Центр
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-2">
+                      Красная площадь, 1
+                    </p>
+                    <p className="text-gray-500 text-sm">
+                      Наш флагманский отель в самом сердце столицы, в шаговой доступности от главных достопримечательностей
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 border border-gray-200/50 shadow-sm">
+                <div className="flex items-start space-x-4">
+                  <div className="w-3 h-3 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      CLUB43 Парк
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-2">
+                      Парк Горького, 9
+                    </p>
+                    <p className="text-gray-500 text-sm">
+                      Уютный отель рядом с парком Горького, идеально подходит для спокойного отдыха в зеленой зоне
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 border border-gray-200/50 shadow-sm">
+                <div className="flex items-start space-x-4">
+                  <div className="w-3 h-3 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      CLUB43 Бизнес
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-2">
+                      Московский Сити
+                    </p>
+                    <p className="text-gray-500 text-sm">
+                      Современный бизнес-отель в деловом центре столицы, оснащенный всем необходимым для работы
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+
       {rooms.length > 0 && (
         <div className="bg-white/90 backdrop-blur-md py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

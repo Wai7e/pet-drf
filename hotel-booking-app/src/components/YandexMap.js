@@ -31,19 +31,47 @@ const YandexMap = ({
             controls: ['zoomControl', 'fullscreenControl', 'geolocationControl']
           });
 
-          // Добавляем стиль карты
-          mapInstance.current.options.set('theme', 'islands#night');
+          // Добавляем стиль карты (светлая тема для лучшей интеграции)
           
-          // Добавляем метку отеля
-          const placemark = new window.ymaps.Placemark(center, {
-            balloonContent: 'CLUB43 Hotel',
-            hintContent: 'Наш отель'
-          }, {
-            preset: 'islands#blueHotelIcon',
-            iconColor: '#2563eb'
-          });
+          // Добавляем метки отелей
+          const locations = [
+            {
+              coords: [55.7539, 37.6208],
+              name: 'CLUB43 Центр',
+              address: 'Красная площадь, 1',
+              color: '#2563eb'
+            },
+            {
+              coords: [55.7312, 37.6014],
+              name: 'CLUB43 Парк',
+              address: 'Парк Горького, 9',
+              color: '#059669'
+            },
+            {
+              coords: [55.7468, 37.5386],
+              name: 'CLUB43 Бизнес',
+              address: 'Московский Сити',
+              color: '#7c3aed'
+            }
+          ];
 
-          mapInstance.current.geoObjects.add(placemark);
+          locations.forEach(location => {
+            const placemark = new window.ymaps.Placemark(location.coords, {
+              balloonContent: `
+                <div style="padding: 10px; font-family: Arial, sans-serif;">
+                  <h3 style="margin: 0 0 8px 0; color: #1f2937; font-size: 16px;">${location.name}</h3>
+                  <p style="margin: 0; color: #6b7280; font-size: 14px;">${location.address}</p>
+                  <button style="margin-top: 10px; background: ${location.color}; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Подробнее</button>
+                </div>
+              `,
+              hintContent: location.name
+            }, {
+              preset: 'islands#blueHotelIcon',
+              iconColor: location.color
+            });
+
+            mapInstance.current.geoObjects.add(placemark);
+          });
 
           // Настраиваем поведение карты
           mapInstance.current.behaviors.enable([
